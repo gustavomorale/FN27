@@ -1,0 +1,13 @@
+{
+  "name": "fn-desafio-reset",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Fernanda Nadaline · Desafio Reset Metabólico funnel (landing + obrigado) on Cloudflare Workers static assets",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

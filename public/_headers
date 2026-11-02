@@ -1,0 +1,25 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Strict-Transport-Security: max-age=31536000
+
+/assets/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+/assets/img/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=86400
+
+/assets/video/*
+  Cache-Control: public, max-age=2592000
+
+/assets/css/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+/assets/js/*
+  Cache-Control: public, max-age=600, stale-while-revalidate=86400
+
+/obrigado-reset-metabolico-v3/*
+  X-Robots-Tag: noindex, nofollow

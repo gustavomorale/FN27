@@ -1,0 +1,19 @@
+{
+  // Cloudflare Worker + static assets for the FN Reset Metabólico funnel.
+  // Docs: https://developers.cloudflare.com/workers/static-assets/
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fn-desafio-reset",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "observability": { "enabled": true }
+  // Secrets (set in the Cloudflare dashboard or with `npx wrangler secret put NAME`):
+  //   LEAD_WEBHOOK_URL     where /api/lead forwards the e-mail (ManyChat, Make, Kajabi…)
+  //   ANSWERS_WEBHOOK_URL  where /api/answers forwards the two questions
+  //   WEBHOOK_TOKEN        optional, sent as "Authorization: Bearer …"
+}

@@ -1,0 +1,13 @@
+VÍDEOS DA FERNANDA · coloque os arquivos nesta pasta com estes nomes exatos
+
+fernanda-londres.mp4       Seção "Quem vai te acompanhar" da landing. 30 a 60 s, horizontal 16:9.
+fernanda-boas-vindas.mp4   Página de obrigado. 20 a 30 s, vertical 3:4 ou 9:16.
+                           Roteiro: "Que bom que você chegou! Entra no grupo que eu te espero lá."
+
+Enquanto o arquivo não existir, a página mostra a foto no lugar e nada quebra.
+
+Formato para web: MP4 (H.264 + AAC), até 1080 px no lado maior, de 3 a 8 MB.
+Com legendas queimadas no vídeo, porque muita gente assiste sem som.
+
+Exemplo de conversão com ffmpeg:
+ffmpeg -i original.mov -vf "scale=-2:1080" -c:v libx264 -preset veryfast -crf 26 -c:a aac -b:a 96k -movflags +faststart fernanda-boas-vindas.mp4
