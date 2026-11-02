@@ -15,23 +15,17 @@ src/worker.js                         POST /api/lead e /api/answers → webhooks
 wrangler.jsonc                        configuração do Cloudflare
 ```
 
-## 1 · Subir para o GitHub (uma vez)
+## 1 · Repositório
 
-No Terminal, dentro desta pasta:
+GitHub: **github.com/gustavomorale/FN27** (branch `main`). Para trabalhar localmente:
 
 ```bash
-cd ~/Downloads/FN-website-v2/site
-git init -b main
-git add .
-git commit -m "FN Reset Metabólico v3: landing, obrigado, Cloudflare worker"
-gh repo create craftframe/fn-desafio-reset --private --source=. --push
+git clone https://github.com/gustavomorale/FN27.git
 ```
-
-Sem o `gh` instalado: crie um repositório **privado** vazio no github.com e siga o "push an existing repository" que ele mostra.
 
 ## 2 · Ligar no Cloudflare (uma vez)
 
-1. dash.cloudflare.com → **Workers & Pages → Create → Import a repository** → escolha `fn-desafio-reset`.
+1. dash.cloudflare.com → **Workers & Pages → Create → Import a repository** → escolha `gustavomorale/FN27`.
 2. Build command: *(vazio)* · Deploy command: `npx wrangler deploy` (o padrão). Nada para compilar.
 3. Depois do primeiro deploy, em **Settings → Variables and Secrets**, adicione como *Secret*:
    - `LEAD_WEBHOOK_URL` · webhook que recebe o e-mail (ManyChat, Make, Kajabi…)
