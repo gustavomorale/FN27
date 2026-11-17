@@ -1,0 +1,33 @@
+name = "fn-dm"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+
+# Control panel (static) served from /panel
+[assets]
+directory = "./public"
+run_worker_first = ["/webhook", "/api/*"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fn-dm"
+database_id = "REPLACE_WITH_D1_ID"   # from: npx wrangler d1 create fn-dm
+
+# Weekly Instagram token refresh (Mondays 04:17 UTC)
+[triggers]
+crons = ["17 4 * * 1"]
+
+[vars]
+GRAPH_VERSION = "v24.0"
+TIMEZONE = "Europe/London"
+
+# Secrets (set with: npx wrangler secret put NAME)
+# META_VERIFY_TOKEN     any random string, also typed into the Meta webhook settings
+# META_APP_SECRET       Meta app secret (Facebook app, used for WhatsApp webhooks)
+# IG_APP_SECRET         Instagram app secret (App Dashboard > Instagram > API setup), used for IG webhooks
+# IG_USER_ID            FN's Instagram professional account id
+# IG_ACCESS_TOKEN       long-lived Instagram user token (refreshed weekly by the cron)
+# WA_TOKEN              System user permanent token with whatsapp_business_messaging + management
+# WA_PHONE_NUMBER_ID    WhatsApp phone number id
+# WA_WABA_ID            WhatsApp Business Account id (for templates)
+# ANTHROPIC_API_KEY     Claude API key
+# PANEL_PASSWORD        password for the control panel API
