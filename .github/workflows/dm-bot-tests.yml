@@ -1,0 +1,24 @@
+name: dm-bot tests
+on:
+  pull_request:
+    paths: ['dm-bot/**']
+  push:
+    branches: [main]
+    paths: ['dm-bot/**']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: dm-bot
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - name: No secrets committed
+        run: |
+          ! grep -rEn "sk-ant-|EAA[A-Za-z0-9]{20,}|IGAA[A-Za-z0-9]{20,}" --include=*.js --include=*.json --include=*.toml --include=*.html . || (echo "Possible secret in code" && exit 1)

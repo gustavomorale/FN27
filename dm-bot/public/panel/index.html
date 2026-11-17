@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>FN DM · Control panel</title>
+<style>
+  :root{--bg:#f6f4f1;--card:#fff;--ink:#1f1b18;--mute:#7a716a;--line:#e7e1da;--acc:#c2577a;--acc2:#f6e3ea;--ok:#2f8f5b;--warn:#c47f14;--bad:#c0392b;--r:12px}
+  *{box-sizing:border-box}
+  body{margin:0;font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  header{display:flex;align-items:center;gap:16px;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+  header h1{font-size:16px;margin:0;font-weight:650}
+  header h1 span{color:var(--acc)}
+  nav{display:flex;gap:4px;flex-wrap:wrap}
+  nav button{background:none;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;color:var(--mute);font:inherit}
+  nav button.on{background:var(--acc2);color:var(--acc);font-weight:600}
+  .stats{margin-left:auto;display:flex;gap:14px;color:var(--mute);font-size:12px}
+  .stats b{color:var(--ink)}
+  main{padding:20px;max-width:1280px;margin:0 auto}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:14px}
+  h2{font-size:15px;margin:0 0 10px}
+  h3{font-size:13px;margin:14px 0 6px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+  label{display:block;font-size:12px;color:var(--mute);margin:10px 0 4px}
+  input[type=text],input[type=password],input[type=number],input[type=url],textarea,select{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff;color:var(--ink)}
+  textarea{min-height:80px;resize:vertical}
+  .btn{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:8px 14px;cursor:pointer;font:inherit;font-weight:600}
+  .btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:500}
+  .btn.small{padding:4px 10px;font-size:12px}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .muted{color:var(--mute)}
+  .pill{display:inline-block;padding:2px 8px;border-radius:99px;font-size:11px;background:#eee;color:#555;margin:1px}
+  .pill.ig{background:#fde7f0;color:#b03a6b}.pill.wa{background:#e3f6ea;color:#1f7a45}
+  .pill.human{background:#fff1d6;color:#8a5a00}.pill.need{background:#fde3e0;color:var(--bad)}
+  .inbox{display:grid;grid-template-columns:340px 1fr;gap:14px;height:calc(100vh - 120px)}
+  .list{overflow:auto;padding:0}
+  .list .item{padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer}
+  .list .item:hover,.list .item.on{background:var(--acc2)}
+  .conv{display:flex;flex-direction:column;padding:0;overflow:hidden}
+  .conv .top{padding:12px 16px;border-bottom:1px solid var(--line)}
+  .msgs{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:6px}
+  .m{max-width:72%;padding:8px 12px;border-radius:14px;white-space:pre-wrap;word-wrap:break-word}
+  .m.in{background:#f0ece7;align-self:flex-start}
+  .m.out{background:var(--acc2);align-self:flex-end}
+  .m.sys{background:#fff7e6;align-self:center;font-size:12px}
+  .m.shadow{background:#fff;border:1px dashed var(--warn);opacity:.85}
+  #mode{font-weight:600;border-radius:99px;padding:6px 10px;width:auto}
+  #mode.live{background:#e3f6ea;color:var(--ok)} #mode.shadow{background:#fff1d6;color:#8a5a00} #mode.paused{background:#fde3e0;color:var(--bad)}
+  .m small{display:block;font-size:10px;color:var(--mute);margin-top:3px}
+  .compose{border-top:1px solid var(--line);padding:10px;display:flex;gap:8px}
+  .compose textarea{min-height:44px}
+  .flow{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px}
+  .flow.off{opacity:.55}
+  .flow .head{display:flex;gap:8px;align-items:center}
+  .flow .head b{flex:1}
+  .chk{display:inline-flex;gap:6px;align-items:center;margin-right:14px;color:var(--ink);font-size:13px}
+  .chat{border:1px solid var(--line);border-radius:10px;min-height:180px;max-height:380px;overflow:auto;padding:10px;display:flex;flex-direction:column;gap:6px;background:#fcfbfa}
+  .ok{color:var(--ok)}.bad{color:var(--bad)}.warn{color:var(--warn)}
+  .hidden{display:none!important}
+  #login{max-width:360px;margin:12vh auto}
+  #toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;opacity:0;transition:.2s;pointer-events:none}
+  #toast.show{opacity:1}
+  code{background:#f2eee9;padding:2px 6px;border-radius:6px;font-size:12px}
+  @media (max-width:860px){.inbox{grid-template-columns:1fr;height:auto}.grid2{grid-template-columns:1fr}.stats{display:none}}
+</style>
+</head>
+<body>
+<div id="login" class="card">
+  <h2>FN DM · Control panel</h2>
+  <label>Password</label>
+  <input id="pw" type="password" autocomplete="current-password">
+  <div style="margin-top:12px"><button class="btn" onclick="login()">Enter</button></div>
+  <p id="loginErr" class="bad"></p>
+</div>
+
+<div id="app" class="hidden">
+<header>
+  <h1>FN <span>DM</span></h1>
+  <nav id="tabs">
+    <button data-t="inbox" class="on">Inbox</button>
+    <button data-t="flows">Flows</button>
+    <button data-t="ai">AI</button>
+    <button data-t="broadcast">Broadcast</button>
+    <button data-t="import">Import</button>
+    <button data-t="setup">Setup</button>
+  </nav>
+  <div class="stats" id="stats"></div>
+  <select id="mode" title="Bot mode" onchange="changeMode(this.value)"><option value="paused">● Paused</option><option value="shadow">● Shadow (test)</option><option value="live">● Live</option></select>
+</header>
+<main>
+
+<!-- INBOX -->
+<section id="t-inbox">
+  <div class="inbox">
+    <div class="card list">
+      <div style="padding:10px;border-bottom:1px solid var(--line)">
+        <div class="row">
+          <select id="fFilter" style="flex:1"><option value="needs_human">Needs a human</option><option value="">All</option><option value="human">Human mode</option></select>
+          <select id="fChannel" style="width:110px"><option value="">All</option><option value="ig">Instagram</option><option value="wa">WhatsApp</option></select>
+        </div>
+        <input id="fQ" type="text" placeholder="Search name, @user or number" style="margin-top:6px">
+      </div>
+      <div id="contactList"></div>
+    </div>
+    <div class="card conv">
+      <div class="top" id="convTop"><span class="muted">Pick a conversation</span></div>
+      <div class="msgs" id="msgs"></div>
+      <div class="compose hidden" id="compose">
+        <textarea id="replyText" placeholder="Reply as the FN team (the bot pauses for this person)"></textarea>
+        <button class="btn" onclick="sendReply()">Send</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLOWS -->
+<section id="t-flows" class="hidden">
+  <div class="card">
+    <div class="row"><h2 style="flex:1;margin:0">Keyword flows</h2>
+      <button class="btn ghost" onclick="addFlow()">+ New flow</button>
+      <button class="btn" onclick="saveFlows()">Save flows</button></div>
+    <p class="muted">Exact-match keywords win, then flows in list order. Comment flows send one public reply and one private DM per person per post. Variables: <code>{first_name}</code> <code>{name}</code> <code>{username}</code>.</p>
+    <div id="flowList"></div>
+  </div>
+  <div class="card">
+    <h2>Test a message</h2>
+    <div class="row">
+      <select id="simCh" style="width:180px"><option value="ig_comment">Instagram comment</option><option value="ig_dm">Instagram DM</option><option value="wa">WhatsApp</option></select>
+      <input id="simText" type="text" placeholder="e.g. QUERO o desafio" style="flex:1">
+      <button class="btn ghost" onclick="simulate()">Test (uses saved flows)</button>
+    </div>
+    <pre id="simOut" class="muted" style="white-space:pre-wrap"></pre>
+  </div>
+</section>
+
+<!-- AI -->
+<section id="t-ai" class="hidden">
+  <div class="grid2">
+    <div class="card">
+      <h2>Claude fallback</h2>
+      <p class="muted">Used only when no keyword matches. Health, complaints, payments and anything sensitive go to a human automatically. These guardrails are fixed in code.</p>
+      <span class="chk"><input type="checkbox" id="aiIg"> Instagram DMs</span>
+      <span class="chk"><input type="checkbox" id="aiWa"> WhatsApp</span>
+      <label>Model</label><input id="aiModel" type="text">
+      <label>FN knowledge (the only source of truth the AI can use)</label>
+      <textarea id="aiKnowledge" style="min-height:300px"></textarea>
+      <label>Disclosure added to the first AI reply (optional)</label><input id="aiDisclosure" type="text" placeholder="e.g. (Assistente automático da equipe FN)">
+      <label>Fallback message (audio, images, AI error)</label><input id="aiFallback" type="text">
+      <div class="grid2">
+        <div><label>Bot pauses after a human reply (hours)</label><input id="humanHours" type="number" min="1"></div>
+        <div><label>Keep message history (days)</label><input id="retention" type="number" min="30"></div>
+      </div>
+      <h3>Go-live safety</h3>
+      <label>Testers who always get real replies, even in Shadow (IG @usernames or WhatsApp numbers, comma separated)</label><input id="allowlist" type="text" placeholder="@gustavo, +44 7700 900000">
+      <div class="grid2">
+        <div><label>Max AI replies per person per hour</label><input id="limContact" type="number" min="1"></div>
+        <div><label>Max AI replies per day (cost cap)</label><input id="limDay" type="number" min="10"></div>
+      </div>
+      <label>Notify webhook for handoffs (Slack or Make URL, optional)</label><input id="notifyUrl" type="url">
+      <h3>Broadcast opt-out</h3>
+      <div class="grid2">
+        <div><label>Opt-out keywords</label><input id="optOutK" type="text"></div>
+        <div><label>Opt-in keywords</label><input id="optInK" type="text"></div>
+      </div>
+      <label>Opt-out reply</label><input id="optOutR" type="text">
+      <label>Opt-in reply</label><input id="optInR" type="text">
+      <div style="margin-top:14px"><button class="btn" onclick="saveSettings()">Save AI settings</button></div>
+    </div>
+    <div class="card">
+      <h2>Sandbox</h2>
+      <p class="muted">Chat with the bot using the settings on the left (saved or not). Nothing is sent to Meta. Each message is a real Claude call.</p>
+      <select id="sbCh"><option value="wa">WhatsApp</option><option value="ig_dm">Instagram DM</option></select>
+      <div class="chat" id="sbChat" style="margin-top:8px"></div>
+      <div class="row" style="margin-top:8px">
+        <input id="sbText" type="text" placeholder="Write as a follower…" style="flex:1" onkeydown="if(event.key==='Enter')sandbox()">
+        <button class="btn ghost" onclick="sandbox()">Send</button>
+        <button class="btn ghost" onclick="sbHist=[];$('sbChat').innerHTML=''">Reset</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BROADCAST -->
+<section id="t-broadcast" class="hidden">
+  <div class="card" style="max-width:760px">
+    <h2>WhatsApp broadcast (approved templates)</h2>
+    <p class="muted">Goes only to WhatsApp contacts who haven't opted out. Outside the 24h window, Meta only allows approved templates. Try Utility before Marketing where the content allows it.</p>
+    <div class="row"><button class="btn ghost" onclick="loadTemplates()">Load templates</button><span id="tplNote" class="muted"></span></div>
+    <label>Template</label><select id="tpl" onchange="tplChanged()"></select>
+    <pre id="tplBody" class="muted" style="white-space:pre-wrap"></pre>
+    <div id="tplParams"></div>
+    <label>Audience tag (blank = everyone reachable)</label>
+    <div class="row"><input id="bTag" type="text" style="flex:1"><button class="btn ghost" onclick="audience()">Count</button><b id="bCount"></b></div>
+    <label>Type ENVIAR to confirm</label><input id="bConfirm" type="text">
+    <div class="row" style="margin-top:12px"><button class="btn" id="bSend" onclick="broadcast()">Send broadcast</button><span id="bProg" class="muted"></span></div>
+    <p class="warn">Approval gate: only send after Gustavo and FN have approved the template, audience and timing.</p>
+  </div>
+</section>
+
+<!-- IMPORT -->
+<section id="t-import" class="hidden">
+  <div class="card" style="max-width:760px">
+    <h2>Import WhatsApp contacts (ManyChat export or any CSV)</h2>
+    <p class="muted">Columns are detected automatically: phone / whatsapp / telefone, name / nome / first name, tags. Only import people who opted in to WhatsApp messages.</p>
+    <input type="file" id="csvFile" accept=".csv,text/csv">
+    <label>Or paste CSV</label><textarea id="csvText"></textarea>
+    <label>Add this tag to everyone imported (optional)</label><input id="csvTag" type="text" placeholder="e.g. manychat">
+    <div class="row" style="margin-top:12px"><button class="btn ghost" onclick="previewCsv()">Preview</button><button class="btn" onclick="importCsv()">Import</button></div>
+    <pre id="csvOut" class="muted" style="white-space:pre-wrap"></pre>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section id="t-setup" class="hidden">
+  <div class="card">
+    <h2>Connection</h2>
+    <p>Webhook URL for Meta (Instagram and WhatsApp): <code id="hookUrl"></code></p>
+    <div class="row"><button class="btn ghost" onclick="health()">Run health check</button><button class="btn ghost" onclick="refreshTok()">Refresh Instagram token now</button><button class="btn ghost" onclick="connectHooks()">Connect webhooks (IG account + WhatsApp WABA)</button></div>
+    <pre id="healthOut" style="white-space:pre-wrap"></pre>
+  </div>
+  <div class="card">
+    <h2>Go-live checklist</h2>
+    <div id="checklist"></div>
+  </div>
+  <div class="card">
+    <h2>Version history</h2>
+    <p class="muted">Every save keeps the previous version (last 20 of each). Restoring never switches the bot to Live.</p>
+    <div class="row"><button class="btn ghost" onclick="versions('flows')">Flow versions</button><button class="btn ghost" onclick="versions('settings')">Settings versions</button></div>
+    <div id="versionList"></div>
+  </div>
+  <div class="card">
+    <h2>Backup</h2>
+    <button class="btn ghost" onclick="exportJson()">Download flows + settings (JSON)</button>
+    <label>Restore from JSON</label><input type="file" id="restoreFile" accept=".json" onchange="restore(this)">
+  </div>
+</section>
+</main>
+</div>
+<div id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let PW = '', state = null, flows = [], current = null, sbHist = [], templates = [];
+const store = { get(k){ try { return sessionStorage.getItem(k); } catch { return null; } }, set(k,v){ try { sessionStorage.setItem(k,v); } catch {} } };
+
+function toast(t){ const e=$('toast'); e.textContent=t; e.classList.add('show'); setTimeout(()=>e.classList.remove('show'),2600); }
+async function call(path, body, method){
+  const res = await fetch('/api/'+path, { method: method || (body ? 'POST' : 'GET'), headers: { 'authorization': 'Bearer '+PW, 'content-type':'application/json' }, body: body ? JSON.stringify(body) : undefined });
+  const data = await res.json().catch(()=>({}));
+  if (res.status === 401) { $('app').classList.add('hidden'); $('login').classList.remove('hidden'); throw new Error('Wrong password'); }
+  if (!res.ok) throw new Error(data.error || ('Error '+res.status));
+  return data;
+}
+async function login(){
+  PW = $('pw').value || store.get('fnpw') || '';
+  try { await loadState(); store.set('fnpw', PW); $('login').classList.add('hidden'); $('app').classList.remove('hidden'); loadContacts(); }
+  catch(e){ $('loginErr').textContent = e.message; }
+}
+$('pw').addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
+if (store.get('fnpw')) { $('pw').value = store.get('fnpw'); login(); }
+
+document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => {
+  document.querySelectorAll('#tabs button').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('main > section').forEach(s => s.classList.toggle('hidden', s.id !== 't-'+b.dataset.t));
+  if (b.dataset.t === 'setup') renderChecklist();
+});
+
+async function loadState(){
+  state = await call('state');
+  flows = state.flows || [];
+  const c = state.counts || {};
+  $('stats').innerHTML = `<span>Need a human <b>${c.needs_human||0}</b></span><span>In 24h <b>${c.in_24h||0}</b></span><span>AI replies 24h <b>${c.ai_24h||0}</b></span><span>Contacts <b>${c.contacts||0}</b></span>`;
+  $('hookUrl').textContent = state.webhookUrl;
+  renderFlows(); renderSettings();
+}
+
+// ---------- Inbox ----------
+const chPill = ch => `<span class="pill ${ch}">${ch==='wa'?'WhatsApp':'Instagram'}</span>`;
+const who = c => c.name || (c.username ? '@'+c.username : c.id);
+const ago = t => { if(!t) return ''; const m = Math.round((Date.now()-t)/60000); return m<60? m+'m' : m<1440? Math.round(m/60)+'h' : Math.round(m/1440)+'d'; };
+['fFilter','fChannel'].forEach(id => $(id).onchange = loadContacts);
+let qT; $('fQ').oninput = () => { clearTimeout(qT); qT = setTimeout(loadContacts, 300); };
+async function loadContacts(){
+  const p = new URLSearchParams({ filter: $('fFilter').value, channel: $('fChannel').value, q: $('fQ').value });
+  const { contacts } = await call('contacts?'+p);
+  $('contactList').innerHTML = contacts.length ? contacts.map(c => `<div class="item ${current&&current.id===c.id&&current.channel===c.channel?'on':''}" onclick='openConv(${JSON.stringify(c.channel)},${JSON.stringify(c.id)})'>
+    <div class="row"><b style="flex:1">${esc(who(c))}</b><span class="muted" style="font-size:11px">${ago(c.last_inbound||c.created_at)}</span></div>
+    <div>${chPill(c.channel)}${c.needs_human?'<span class="pill need">needs human</span>':''}${c.mode==='human'?'<span class="pill human">human mode</span>':''}${c.tags.map(t=>`<span class="pill">${esc(t)}</span>`).join('')}</div>
+    ${c.handoff_reason&&c.needs_human?`<div class="muted" style="font-size:12px">${esc(c.handoff_reason)}</div>`:''}</div>`).join('') : '<p class="muted" style="padding:14px">Nothing here.</p>';
+}
+async function openConv(channel, id){
+  const { contact, messages } = await call(`messages?channel=${channel}&id=${encodeURIComponent(id)}`);
+  current = contact;
+  const open = contact.last_inbound && Date.now()-contact.last_inbound < 86400000;
+  $('convTop').innerHTML = `<div class="row"><b style="font-size:15px">${esc(who(contact))}</b>${chPill(contact.channel)}
+    ${contact.username?`<span class="muted">@${esc(contact.username)}</span>`:''}${contact.channel==='wa'?`<span class="muted">+${esc(contact.id)}</span>`:''}
+    <span style="flex:1"></span>
+    ${contact.mode==='human'?`<button class="btn small" onclick="setMode('bot')">Hand back to bot</button>`:`<button class="btn ghost small" onclick="setMode('human')">Take over</button>`}
+    ${contact.needs_human?`<button class="btn ghost small" onclick="resolve()">Mark done</button>`:''}</div>
+    <div class="row" style="margin-top:6px"><span class="muted" style="font-size:12px">Tags</span><input id="tagEdit" type="text" value="${esc(contact.tags.join(', '))}" style="flex:1;padding:4px 8px"><button class="btn ghost small" onclick="saveTags()">Save tags</button>
+    <span class="muted" style="font-size:12px">${open?'<span class="ok">24h window open</span>':'<span class="warn">24h window closed</span>'}${contact.opted_out?' · opted out of broadcasts':''}</span></div>`;
+  $('msgs').innerHTML = messages.map(m => {
+    const sh = (m.source||'').startsWith('shadow:'); const srcRaw = sh ? m.source.slice(7) : m.source;
+    const cls = (m.kind==='system' ? 'sys' : m.direction) + (sh ? ' shadow' : '');
+    const src = (sh ? 'SHADOW, not sent · ' : '') + (m.direction==='out' ? ({ai:'AI',human:'Team (panel)',human_app:'Team (IG app)',broadcast:'Broadcast',system:'System'}[srcRaw] || (srcRaw||'').replace('flow:','Flow: ')) : (m.kind==='comment'?'Comment':''));
+    return `<div class="m ${cls}">${esc(m.text)}<small>${src?esc(src)+' · ':''}${new Date(m.created_at).toLocaleString()}</small></div>`;
+  }).join('');
+  $('msgs').scrollTop = 1e9;
+  $('compose').classList.toggle('hidden', !open);
+  loadContacts();
+}
+async function setMode(mode){ await call('contact', { channel: current.channel, id: current.id, patch: { mode } }); toast(mode==='human'?'You have this chat. Bot paused.':'Bot is back on.'); openConv(current.channel, current.id); }
+async function resolve(){ await call('contact', { channel: current.channel, id: current.id, patch: { needs_human: false } }); openConv(current.channel, current.id); }
+async function saveTags(){ const tags = $('tagEdit').value.split(',').map(t=>t.trim().toLowerCase()).filter(Boolean); await call('contact', { channel: current.channel, id: current.id, patch: { tags } }); toast('Tags saved'); openConv(current.channel, current.id); }
+async function sendReply(){
+  const text = $('replyText').value.trim(); if(!text) return;
+  try { await call('send', { channel: current.channel, id: current.id, text }); $('replyText').value=''; openConv(current.channel, current.id); }
+  catch(e){ toast(e.message); }
+}
+setInterval(() => { if (!$('app').classList.contains('hidden') && !$('t-inbox').classList.contains('hidden')) { loadContacts(); if (current) openConv(current.channel, current.id); } }, 30000);
+
+// ---------- Flows ----------
+const CH = { ig_comment: 'IG comment → DM', ig_dm: 'IG DM', wa: 'WhatsApp' };
+const csv = s => String(s||'').split(',').map(x=>x.trim()).filter(Boolean);
+function renderFlows(){
+  $('flowList').innerHTML = flows.map((f,i) => `<div class="flow ${f.active===false?'off':''}">
+    <div class="head"><b>${esc(f.name||'New flow')}</b>
+      <span class="chk"><input type="checkbox" ${f.active!==false?'checked':''} onchange="flows[${i}].active=this.checked;renderFlows()"> active</span>
+      <button class="btn ghost small" onclick="moveFlow(${i},-1)">↑</button><button class="btn ghost small" onclick="moveFlow(${i},1)">↓</button>
+      <button class="btn ghost small" onclick="dupFlow(${i})">Duplicate</button><button class="btn ghost small" onclick="delFlow(${i})">Delete</button>
+      <button class="btn ghost small" onclick="this.closest('.flow').querySelector('.body').classList.toggle('hidden')">Edit</button></div>
+    <div class="muted" style="font-size:12px">${(f.channels||[]).map(c=>CH[c]).join(' · ')} · ${(f.keywords||[]).map(k=>'"'+esc(k)+'"').join(', ')} (${f.match||'contains'})</div>
+    <div class="body ${f._open?'':'hidden'}">
+      <div class="grid2">
+        <div><label>Name</label><input type="text" value="${esc(f.name)}" oninput="flows[${i}].name=this.value"></div>
+        <div><label>Short description (helps the AI point people here)</label><input type="text" value="${esc(f.description)}" oninput="flows[${i}].description=this.value"></div>
+      </div>
+      <label>Channels</label>${Object.entries(CH).map(([k,v])=>`<span class="chk"><input type="checkbox" ${(f.channels||[]).includes(k)?'checked':''} onchange="toggleCh(${i},'${k}',this.checked)"> ${v}</span>`).join('')}
+      <div class="grid2">
+        <div><label>Keywords (comma separated, accents and case ignored)</label><input type="text" value="${esc((f.keywords||[]).join(', '))}" oninput="flows[${i}].keywords=csv(this.value)"></div>
+        <div><label>Match</label><select onchange="flows[${i}].match=this.value"><option value="contains" ${f.match!=='exact'?'selected':''}>Contains the word</option><option value="exact" ${f.match==='exact'?'selected':''}>Whole message equals</option></select></div>
+      </div>
+      <label>Only on these post ids (comments; blank = all posts)</label><input type="text" value="${esc((f.mediaIds||[]).join(', '))}" oninput="flows[${i}].mediaIds=csv(this.value)">
+      <label>Public comment replies (one per line, one picked at random)</label><textarea oninput="flows[${i}].publicReplies=this.value.split('\\n').map(s=>s.trim()).filter(Boolean)">${esc((f.publicReplies||[]).join('\n'))}</textarea>
+      <label>DM message</label><textarea oninput="flows[${i}].message=this.value">${esc(f.message)}</textarea>
+      <label>Link buttons (max 3 on Instagram, 1 on WhatsApp; 20 characters)</label>
+      ${[0,1,2].map(b=>`<div class="row" style="margin-bottom:4px"><input type="text" placeholder="Button text" maxlength="20" style="width:200px" value="${esc(f.buttons?.[b]?.title)}" oninput="setBtn(${i},${b},'title',this.value)"><input type="url" placeholder="https://" style="flex:1" value="${esc(f.buttons?.[b]?.url)}" oninput="setBtn(${i},${b},'url',this.value)"></div>`).join('')}
+      <div class="grid2">
+        <div><label>Quick replies (comma separated)</label><input type="text" value="${esc((f.quickReplies||[]).join(', '))}" oninput="flows[${i}].quickReplies=csv(this.value)"></div>
+        <div><label>Add tags</label><input type="text" value="${esc((f.addTags||[]).join(', '))}" oninput="flows[${i}].addTags=csv(this.value).map(t=>t.toLowerCase())"></div>
+      </div>
+    </div></div>`).join('') || '<p class="muted">No flows yet.</p>';
+}
+function toggleCh(i,k,on){ const s=new Set(flows[i].channels||[]); on?s.add(k):s.delete(k); flows[i].channels=[...s]; }
+function setBtn(i,b,k,v){ flows[i].buttons = flows[i].buttons || []; flows[i].buttons[b] = { ...(flows[i].buttons[b]||{}), [k]: v }; }
+function addFlow(){ flows.push({ name:'', active:true, channels:['ig_comment','ig_dm','wa'], keywords:[], match:'contains', publicReplies:['Te mandei no direct! 💛'], message:'Oi {first_name}! ', buttons:[], quickReplies:[], addTags:[], _open:true }); renderFlows(); }
+function delFlow(i){ if(confirm('Delete this flow?')){ flows.splice(i,1); renderFlows(); } }
+function dupFlow(i){ const f = JSON.parse(JSON.stringify(flows[i])); delete f.id; f.name += ' (copy)'; f._open = true; flows.splice(i+1,0,f); renderFlows(); }
+function moveFlow(i,d){ const j=i+d; if(j<0||j>=flows.length) return; [flows[i],flows[j]]=[flows[j],flows[i]]; renderFlows(); }
+async function saveFlows(){
+  try {
+    const clean = flows.map(f => { const { _open, ...rest } = f; rest.buttons = (rest.buttons||[]).filter(b => b && b.title && b.url); return rest; });
+    const r = await call('flows', { flows: clean }, 'PUT'); flows = r.flows; renderFlows(); toast('Flows saved');
+  } catch(e){ toast(e.message); }
+}
+async function simulate(){
+  $('simOut').textContent = 'Testing…';
+  try { $('simOut').textContent = JSON.stringify(await call('simulate', { channel: $('simCh').value, text: $('simText').value }), null, 2); }
+  catch(e){ $('simOut').textContent = e.message; }
+}
+
+// ---------- AI ----------
+function renderSettings(){
+  const s = state.settings, a = s.ai;
+  $('aiIg').checked = !!a.enabled.ig_dm; $('aiWa').checked = !!a.enabled.wa;
+  $('aiModel').value = a.model; $('aiKnowledge').value = a.knowledge; $('aiDisclosure').value = a.disclosure || ''; $('aiFallback').value = a.fallbackMessage;
+  $('humanHours').value = s.humanTimeoutHours; $('retention').value = s.retentionDays || 365; $('notifyUrl').value = s.notifyWebhookUrl || '';
+  $('allowlist').value = (s.allowlist||[]).join(', '); $('limContact').value = s.limits.aiPerContactPerHour; $('limDay').value = s.limits.aiPerDay;
+  $('mode').value = s.mode; $('mode').className = s.mode;
+  $('optOutK').value = s.optOutKeywords.join(', '); $('optInK').value = s.optInKeywords.join(', '); $('optOutR').value = s.optOutReply; $('optInR').value = s.optInReply;
+}
+function readSettings(){
+  const s = JSON.parse(JSON.stringify(state.settings));
+  Object.assign(s.ai, { enabled: { ig_dm: $('aiIg').checked, wa: $('aiWa').checked }, model: $('aiModel').value.trim(), knowledge: $('aiKnowledge').value, disclosure: $('aiDisclosure').value.trim(), fallbackMessage: $('aiFallback').value.trim() });
+  Object.assign(s, { humanTimeoutHours: Number($('humanHours').value)||24, retentionDays: Number($('retention').value)||365, notifyWebhookUrl: $('notifyUrl').value.trim(),
+    allowlist: csv($('allowlist').value), limits: { aiPerContactPerHour: Number($('limContact').value)||8, aiPerDay: Number($('limDay').value)||400 },
+    optOutKeywords: csv($('optOutK').value), optInKeywords: csv($('optInK').value), optOutReply: $('optOutR').value.trim(), optInReply: $('optInR').value.trim() });
+  return s;
+}
+async function changeMode(mode){
+  const s = { ...state.settings, mode }; let confirmLive;
+  if (mode === 'live') { confirmLive = prompt('Live sends real replies to everyone on Instagram and WhatsApp. Make sure ManyChat automations are off. Type LIVE to confirm.'); if (confirmLive !== 'LIVE') { $('mode').value = state.settings.mode; return; } }
+  try { const r = await call('settings', { settings: s, confirmLive }, 'PUT'); state.settings = r.settings; renderSettings(); toast('Mode: ' + mode); }
+  catch(e){ toast(e.message); $('mode').value = state.settings.mode; }
+}
+async function saveSettings(){ try { const r = await call('settings', { settings: readSettings() }, 'PUT'); state.settings = r.settings; toast('AI settings saved'); } catch(e){ toast(e.message); } }
+async function sandbox(){
+  const text = $('sbText').value.trim(); if(!text) return; $('sbText').value='';
+  const chat = $('sbChat');
+  chat.insertAdjacentHTML('beforeend', `<div class="m in">${esc(text)}</div>`);
+  sbHist.push({ direction:'in', text });
+  try {
+    const r = await call('simulate', { channel: $('sbCh').value, text, history: sbHist, settings: readSettings() });
+    const reply = r.type==='flow' ? r.text + (r.buttons||[]).map(b=>`\n[${b.title}] ${b.url}`).join('') : r.reply;
+    sbHist.push({ direction:'out', text: reply });
+    chat.insertAdjacentHTML('beforeend', `<div class="m out">${esc(reply)}<small>${r.type==='flow'?'Flow: '+esc(r.flow):'AI'}${r.handoff?' · <b class="bad">HANDOFF: '+esc(r.handoffReason)+'</b>':''}${r.tags?.length?' · tags: '+esc(r.tags.join(', ')):''}</small></div>`);
+  } catch(e){ chat.insertAdjacentHTML('beforeend', `<div class="m sys">${esc(e.message)}</div>`); }
+  chat.scrollTop = 1e9;
+}
+
+// ---------- Broadcast ----------
+async function loadTemplates(){
+  try { templates = (await call('wa/templates')).templates.filter(t => t.status === 'APPROVED');
+    $('tpl').innerHTML = templates.map((t,i)=>`<option value="${i}">${esc(t.name)} · ${esc(t.language)} · ${esc(t.category)}</option>`).join('');
+    $('tplNote').textContent = templates.length + ' approved'; tplChanged(); }
+  catch(e){ toast(e.message); }
+}
+function tplChanged(){
+  const t = templates[$('tpl').value]; if(!t) return;
+  const body = (t.components||[]).find(c=>c.type==='BODY')?.text || '';
+  $('tplBody').textContent = body;
+  const n = [...body.matchAll(/\{\{(\d+)\}\}/g)].length;
+  $('tplParams').innerHTML = Array.from({length:n},(_,i)=>`<label>Value for {{${i+1}}} (variables like {first_name} allowed)</label><input type="text" class="tplp" value="${i===0?'{first_name}':''}">`).join('');
+}
+async function audience(){ const r = await call('wa/audience?tag='+encodeURIComponent($('bTag').value.trim().toLowerCase())); $('bCount').textContent = r.count+' people'; }
+async function broadcast(){
+  const t = templates[$('tpl').value]; if(!t) return toast('Load and pick a template first');
+  if ($('bConfirm').value !== 'ENVIAR') return toast('Type ENVIAR to confirm');
+  $('bSend').disabled = true; let offset = 0, sent = 0, failed = 0;
+  try {
+    while (offset !== null) {
+      const r = await call('wa/broadcast', { template: t.name, language: t.language, bodyParams: [...document.querySelectorAll('.tplp')].map(i=>i.value), tag: $('bTag').value.trim().toLowerCase(), offset, confirm: 'ENVIAR' });
+      sent += r.sent; failed += r.failed.length; offset = r.next;
+      $('bProg').textContent = `Sent ${sent} · failed ${failed}`;
+    }
+    toast('Broadcast finished');
+  } catch(e){ toast(e.message); }
+  $('bSend').disabled = false; $('bConfirm').value = '';
+}
+
+// ---------- Import ----------
+$('csvFile').onchange = async e => { const f = e.target.files[0]; if (f) $('csvText').value = await f.text(); };
+function parseCsv(text){
+  const rows = []; let row = [], cell = '', q = false;
+  const sep = (text.split('\n')[0].match(/;/g)||[]).length > (text.split('\n')[0].match(/,/g)||[]).length ? ';' : ',';
+  for (let i=0;i<text.length;i++){ const c=text[i];
+    if (q) { if (c==='"' && text[i+1]==='"') { cell+='"'; i++; } else if (c==='"') q=false; else cell+=c; }
+    else if (c==='"') q=true; else if (c===sep) { row.push(cell); cell=''; } else if (c==='\n'||c==='\r') { if (c==='\r'&&text[i+1]==='\n') i++; row.push(cell); rows.push(row); row=[]; cell=''; } else cell+=c; }
+  if (cell || row.length) { row.push(cell); rows.push(row); }
+  return rows.filter(r => r.some(x => x.trim()));
+}
+function csvRows(){
+  const rows = parseCsv($('csvText').value); if (rows.length < 2) return [];
+  const h = rows[0].map(x => x.toLowerCase());
+  const pi = h.findIndex(x => /whatsapp|phone|telefone|celular/.test(x));
+  const fi = h.findIndex(x => /first.?name|primeiro/.test(x)); const ni = fi >= 0 ? fi : h.findIndex(x => /name|nome/.test(x));
+  const li = h.findIndex(x => /last.?name|sobrenome/.test(x));
+  const ti = h.findIndex(x => /tag/.test(x)); const oi = h.findIndex(x => /opt.?out|unsubscrib/.test(x));
+  const extra = $('csvTag').value.trim().toLowerCase();
+  return rows.slice(1).map(r => ({ phone: r[pi], name: [r[ni], li>=0?r[li]:''].filter(Boolean).join(' ').trim(), tags: [...(ti>=0? String(r[ti]||'').split(/[,|]/) : []), extra].map(t=>t.trim()).filter(Boolean), optedOut: oi>=0 && /true|yes|sim|1/i.test(r[oi]||'') })).filter(r => r.phone);
+}
+function previewCsv(){ const r = csvRows(); $('csvOut').textContent = r.length ? `${r.length} contacts found. First 5:\n` + JSON.stringify(r.slice(0,5), null, 2) : 'No phone column found.'; }
+async function importCsv(){ const rows = csvRows(); if(!rows.length) return toast('Nothing to import'); try { const r = await call('import', { rows }); $('csvOut').textContent = `Imported ${r.imported} contacts.`; loadState(); } catch(e){ toast(e.message); } }
+
+// ---------- Setup ----------
+async function health(){ $('healthOut').textContent = 'Checking…'; try { $('healthOut').textContent = JSON.stringify(await call('health'), null, 2); } catch(e){ $('healthOut').textContent = e.message; } }
+async function refreshTok(){ try { await call('ig/refresh-token', {}); toast('Instagram token refreshed'); } catch(e){ toast(e.message); } }
+async function connectHooks(){ $('healthOut').textContent='Connecting…'; try { $('healthOut').textContent = JSON.stringify(await call('connect', {}), null, 2); } catch(e){ $('healthOut').textContent = e.message; } }
+async function versions(type){
+  const { versions } = await call('versions?type='+type);
+  $('versionList').innerHTML = versions.length ? versions.map(v=>`<div class="row" style="margin:4px 0"><span style="flex:1">${type} · ${new Date(v.at).toLocaleString()}</span><button class="btn ghost small" onclick='restoreVersion(${JSON.stringify(v.key)})'>Restore</button></div>`).join('') : '<p class="muted">No earlier versions yet.</p>';
+}
+async function restoreVersion(key){ if(!confirm('Restore this version? The current one is kept in history.')) return; try { await call('versions/restore', { key }); await loadState(); toast('Restored'); } catch(e){ toast(e.message); } }
+const CHECK = [
+  'Meta app created (Business type) with Instagram API (Instagram Login) and WhatsApp products',
+  'FN Instagram is a professional account; "Allow access to messages" is on in Instagram settings',
+  'Instagram webhook subscribed: messages, messaging_postbacks, comments (and live_comments)',
+  'WhatsApp: number disconnected from ManyChat, app subscribed to the WABA, permanent system user token set',
+  'WhatsApp webhook subscribed: messages',
+  'Secrets set in Cloudflare and Health check all green',
+  'FN knowledge written in the AI tab and reviewed by FN',
+  'Sandbox tested: prices, dates, health questions hand off, off-topic is declined',
+  'Keyword flows migrated from ManyChat and tested on a test post',
+  'Shadow mode run for 3 to 7 days next to ManyChat; shadow replies reviewed in the Inbox',
+  'Testers on the allowlist tried every flow for real (comment, DM, WhatsApp)',
+  'ManyChat Instagram automations switched off (avoid double replies)',
+  'GO-LIVE APPROVED by Gustavo and FN, then switch mode to Live',
+];
+function renderChecklist(){ let done = {}; try { done = JSON.parse(localStorage.getItem('fn-check')||'{}'); } catch {}
+  $('checklist').innerHTML = CHECK.map((c,i)=>`<div><span class="chk"><input type="checkbox" ${done[i]?'checked':''} onchange="tick(${i},this.checked)"> ${esc(c)}</span></div>`).join(''); }
+function tick(i,v){ try { const d = JSON.parse(localStorage.getItem('fn-check')||'{}'); d[i]=v; localStorage.setItem('fn-check', JSON.stringify(d)); } catch {} }
+function exportJson(){ const blob = new Blob([JSON.stringify({ flows, settings: state.settings }, null, 2)], { type:'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'fn-dm-backup-'+new Date().toISOString().slice(0,10)+'.json'; a.click(); }
+async function restore(input){ const f = input.files[0]; if(!f) return; try { const d = JSON.parse(await f.text()); if (d.flows) await call('flows', { flows: d.flows }, 'PUT'); if (d.settings) await call('settings', { settings: d.settings }, 'PUT'); await loadState(); toast('Restored'); } catch(e){ toast(e.message); } }
+</script>
+</body>
+</html>

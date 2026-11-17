@@ -1,0 +1,56 @@
+{
+  "flows": [
+    {
+      "id": "desafio",
+      "name": "Link do Desafio",
+      "description": "envia o link de inscrição do desafio",
+      "active": true,
+      "channels": ["ig_comment", "ig_dm", "wa"],
+      "keywords": ["DESAFIO", "QUERO"],
+      "match": "contains",
+      "mediaIds": [],
+      "publicReplies": [
+        "Te mandei no direct, {first_name}! 💛",
+        "Acabei de te enviar no direct! 💛",
+        "Olha seu direct, {first_name}! 💛"
+      ],
+      "message": "Oi {first_name}! Que bom que você quer participar. Aqui está o link para garantir sua vaga:",
+      "buttons": [{ "title": "Quero participar", "url": "https://desafiofernandanadaline.com" }],
+      "quickReplies": [],
+      "addTags": ["desafio"]
+    },
+    {
+      "id": "duvida",
+      "name": "Menu de dúvidas",
+      "description": "mostra as opções de ajuda",
+      "active": true,
+      "channels": ["ig_dm", "wa"],
+      "keywords": ["MENU", "AJUDA"],
+      "match": "exact",
+      "mediaIds": [],
+      "publicReplies": [],
+      "message": "Oi {first_name}! Como posso te ajudar? Escolha uma opção ou escreva sua dúvida.",
+      "buttons": [],
+      "quickReplies": ["Desafio", "Acesso", "Falar com a equipe"],
+      "addTags": []
+    }
+  ],
+  "settings": {
+    "ai": {
+      "enabled": { "ig_dm": true, "wa": true },
+      "model": "claude-haiku-5-5",
+      "maxTokens": 500,
+      "historyTurns": 12,
+      "knowledge": "QUEM É A FERNANDA\n(preencher com a FN)\n\nPROGRAMAS ATIVOS\n- Nome, para quem é, o que inclui\n- Preço e formas de pagamento\n- Datas de início e de inscrição\n- Link oficial\n\nPROGRAMAS ENCERRADOS\n- Reset Metabólico: a edição de outubro de 2026 foi a última.\n\nPERGUNTAS FREQUENTES\n- Como acesso o conteúdo?\n- Tem garantia ou reembolso? (se a resposta não estiver aqui, passar para a equipe)\n\nTOM DE VOZ\nCaloroso, próximo, simples, sem promessas de resultado.",
+      "disclosure": "",
+      "fallbackMessage": "Recebi sua mensagem! A equipe da Fernanda te responde em breve. 💛"
+    },
+    "humanTimeoutHours": 24,
+    "retentionDays": 365,
+    "optOutKeywords": ["PARAR", "SAIR", "STOP", "CANCELAR", "DESCADASTRAR"],
+    "optInKeywords": ["VOLTAR", "START", "RECEBER"],
+    "optOutReply": "Pronto, você não vai mais receber nossas mensagens de divulgação. Se mudar de ideia, é só mandar VOLTAR.",
+    "optInReply": "Que bom te ter de volta! Você vai voltar a receber as novidades da Fernanda. 💛",
+    "notifyWebhookUrl": ""
+  }
+}
